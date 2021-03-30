@@ -54,13 +54,14 @@ class DailyAttendance():
                 self.driver.find_element_by_id('id').click()
                 self.driver.find_element_by_id('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                time.sleep(2)
                 self.gsattend = self.driver.find_element_by_css_selector(
                     '#attendchk > div.event-common-wrap > div.section2 > '
                     'div.attendchk-button > a').get_attribute('onclick')
             print("%s started" % com)
             self.login_check = False
-        except:
-            print("%s coundn't login" % com)
+        except Exception as e:
+            print("%s couldn't login" % com)
             self.login_check = True
             while self.login_check:
                 print("%s trying" % com)
@@ -174,7 +175,6 @@ class DailyAttendance():
             except:
                 pass
         elif 'gs' in com:
-
             self.driver.execute_script(self.gsattend)
             time.sleep(1)
             self.driver.find_element_by_css_selector('#attendchk-popLayer > dl > dd > a').click()
@@ -186,7 +186,7 @@ class DailyAttendance():
 
 
 def main():
-    attend = DailyAttendance('')
+    attend = DailyAttendance('hide')
     urllist = ['gmarket', '11', 'gs', 'sidmool']
     for url in urllist:
         attend.login(url)
