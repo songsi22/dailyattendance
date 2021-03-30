@@ -46,6 +46,7 @@ class DailyAttendance():
                 self.driver.get('https://www.sidmool.com/shop/member.html?type=login')
                 self.driver.find_element_by_name('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                time.sleep(1)
                 self.driver.find_element_by_css_selector(
                     '#aside > div.text-color.margin-m > div.login_area > div.login_title.margin-m')
             elif 'gs' in com:
@@ -178,6 +179,13 @@ class DailyAttendance():
             self.driver.execute_script(self.gsattend)
             time.sleep(1)
             self.driver.find_element_by_css_selector('#attendchk-popLayer > dl > dd > a').click()
+            try:
+                result = self.driver.switch_to.alert
+                result.accept()
+                self.driver.find_element_by_css_selector(
+                    '#attendchk > div.event-common-wrap > div.attend_take_point > a').click()
+            except:
+                pass
         print("%s done" % com)
         time.sleep(2)
 
