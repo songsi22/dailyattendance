@@ -175,7 +175,7 @@ class DailyAttendance():
 
 
 def main():
-    attend = DailyAttendance()
+    attend = DailyAttendance('')
     urllist = ['gmarket', '11', 'gs', 'sidmool']
     for url in urllist:
         attend.login(url)
