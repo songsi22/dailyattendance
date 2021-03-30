@@ -23,6 +23,8 @@ class DailyAttendance():
         self.day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
         with open('data.plk', 'rb') as f:
             self.data = pickle.load(f)
+        self.login_check = True
+        self.count = 1
         print("%s" % self.day)
 
     def login(self, com):
@@ -32,29 +34,41 @@ class DailyAttendance():
                                 'http://promotion.gmarket.co.kr/Event/PlusZone.asp')
                 self.driver.find_element_by_name('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('pwd').send_keys(self.data[1], Keys.ENTER)
+                self.driver.switch_to.frame('AttendRulletFrame')
             elif '11' in com:
                 self.driver.get(
                     'https://login.11st.co.kr/auth/front/login.tmall?returnURL='
                     'https%3A%2F%2Fpromo.11st.co.kr%2Fview%2Fp%2F20210101-11check')
                 self.driver.find_element_by_name('loginName').send_keys(self.data[0])
                 self.driver.find_element_by_name('passWord').send_keys(self.data[2], Keys.ENTER)
+                self.driver.execute_script('onAttendanceClick();')
             elif 'sidmool' in com:
                 self.driver.get('https://www.sidmool.com/shop/member.html?type=login')
                 self.driver.find_element_by_name('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                self.driver.find_element_by_css_selector(
+                    '#aside > div.text-color.margin-m > div.login_area > div.login_title.margin-m')
             elif 'gs' in com:
                 self.driver.get('https://www.gsshop.com/cust/login/login.gs?'
                                 'returnurl=68747470733A2F2F6576656e742e677373686f702e636f6d2F6576656e742F70632F617474656e642e67733F')
                 self.driver.find_element_by_id('id').click()
                 self.driver.find_element_by_id('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                self.gsattend = self.driver.find_element_by_css_selector(
+                    '#attendchk > div.event-common-wrap > div.section2 > '
+                    'div.attendchk-button > a').get_attribute('onclick')
             print("%s started" % com)
+            self.login_check = False
         except:
             print("%s coundn't login" % com)
+            self.login_check = True
+            while self.login_check:
+                print("%s trying" % com)
+                time.sleep(1800)
+                self.login(com)
 
     def attend(self, com):
         if 'gmarket' in com:
-            self.driver.switch_to.frame('AttendRulletFrame')
             attend = self.driver.find_element_by_css_selector('#wrapper > a').get_attribute('onclick')
             self.driver.execute_script(attend)
             time.sleep(2)
@@ -118,7 +132,6 @@ class DailyAttendance():
                 except:
                     pass
         elif '11' in com:
-            self.driver.execute_script('onAttendanceClick();')
             time.sleep(1)
             try:
                 result = self.driver.switch_to.alert
@@ -161,10 +174,8 @@ class DailyAttendance():
             except:
                 pass
         elif 'gs' in com:
-            attend = self.driver.find_element_by_css_selector(
-                '#attendchk > div.event-common-wrap > div.section2 > '
-                'div.attendchk-button > a').get_attribute('onclick')
-            self.driver.execute_script(attend)
+
+            self.driver.execute_script(self.gsattend)
             time.sleep(1)
             self.driver.find_element_by_css_selector('#attendchk-popLayer > dl > dd > a').click()
         print("%s done" % com)
@@ -177,12 +188,17 @@ class DailyAttendance():
 def main():
     attend = DailyAttendance('')
     urllist = ['gmarket', '11', 'gs', 'sidmool']
+    # urllist = ['sidmool']
     for url in urllist:
         attend.login(url)
-        attend.attend(url)
+        if not attend.login_check:
+            attend.attend(url)
+        else:
+            pass
     attend.close()
 
 
+main()
 schedule.every().day.at("00:10").do(main)
 while True:
     schedule.run_pending()
