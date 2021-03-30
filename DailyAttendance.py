@@ -188,7 +188,6 @@ class DailyAttendance():
 def main():
     attend = DailyAttendance('')
     urllist = ['gmarket', '11', 'gs', 'sidmool']
-    # urllist = ['sidmool']
     for url in urllist:
         attend.login(url)
         if not attend.login_check:
