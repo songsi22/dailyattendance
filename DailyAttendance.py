@@ -66,7 +66,7 @@ class DailyAttendance():
             self.login_check = True
             while self.login_check:
                 print("%s trying" % com)
-                time.sleep(1800)
+                time.sleep(360)
                 self.login(com)
 
     def attend(self, com):
@@ -173,6 +173,11 @@ class DailyAttendance():
             try:
                 result = self.driver.switch_to.alert
                 result.accept()
+                try:
+                    result = self.driver.switch_to.alert
+                    result.accept()
+                except:
+                    pass
             except:
                 pass
         elif 'gs' in com:
