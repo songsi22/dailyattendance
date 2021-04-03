@@ -73,7 +73,7 @@ class DailyAttendance():
         if 'gmarket' in com:
             attend = self.driver.find_element_by_css_selector('#wrapper > a').get_attribute('onclick')
             self.driver.execute_script(attend)
-            time.sleep(10)
+            time.sleep(5)
             if len(self.driver.window_handles) == 2:
                 self.driver.switch_to.window(self.driver.window_handles[1])
                 self.driver.close()
@@ -89,7 +89,7 @@ class DailyAttendance():
             self.driver.find_element_by_css_selector(
                 '#event_pluszone > div.event_main > div > div.area.attendance > '
                 'div.attendance_benefit > ul > li:nth-child(1) > a > img').click()
-            time.sleep(2)
+            time.sleep(5)
             if len(self.driver.window_handles) == 2:
                 self.driver.switch_to.window(self.driver.window_handles[1])
                 self.driver.find_element_by_css_selector('body > div.popTypeB > div > '
@@ -105,7 +105,7 @@ class DailyAttendance():
             self.driver.find_element_by_css_selector(
                 '#event_pluszone > div.event_main > div > div.area.attendance > '
                 'div.attendance_benefit > ul > li:nth-child(2) > a > img').click()
-            time.sleep(2)
+            time.sleep(5)
             if len(self.driver.window_handles) == 2:
                 self.driver.switch_to.window(self.driver.window_handles[1])
                 self.driver.find_element_by_css_selector('body > div.popTypeB > div > '
@@ -121,7 +121,7 @@ class DailyAttendance():
             self.driver.find_element_by_css_selector(
                 '#event_pluszone > div.event_main > div > div.area.attendance > '
                 'div.attendance_benefit > ul > li:nth-child(3) > a > img').click()
-            time.sleep(2)
+            time.sleep(5)
             if len(self.driver.window_handles) == 2:
                 self.driver.switch_to.window(self.driver.window_handles[1])
                 self.driver.find_element_by_css_selector('body > div.popTypeB > div > '
@@ -169,7 +169,7 @@ class DailyAttendance():
             except:
                 pass
         elif 'sidmool' in com:
-            time.sleep(2)
+            time.sleep(5)
             try:
                 result = self.driver.switch_to.alert
                 result.accept()
@@ -182,7 +182,7 @@ class DailyAttendance():
                 pass
         elif 'gs' in com:
             self.driver.execute_script(self.gsattend)
-            time.sleep(1)
+            time.sleep(5)
             self.driver.find_element_by_css_selector('#attendchk-popLayer > dl > dd > a').click()
             try:
                 result = self.driver.switch_to.alert
