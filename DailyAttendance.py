@@ -134,7 +134,7 @@ class DailyAttendance():
                 except:
                     pass
         elif '11' in com:
-            time.sleep(1)
+            time.sleep(5)
             try:
                 result = self.driver.switch_to.alert
                 result.accept()
