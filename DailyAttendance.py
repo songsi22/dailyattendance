@@ -46,9 +46,8 @@ class DailyAttendance():
                 self.driver.get('https://www.sidmool.com/shop/member.html?type=login')
                 self.driver.find_element_by_name('id').send_keys(self.data[0])
                 self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
-                time.sleep(1)
-                self.driver.find_element_by_css_selector(
-                    '#aside > div.text-color.margin-m > div.login_area > div.login_title.margin-m')
+                ### login check
+                self.driver.get_cookie('user_age')
             elif 'gs' in com:
                 self.driver.get('https://www.gsshop.com/cust/login/login.gs?'
                                 'returnurl=68747470733A2F2F6576656e742e677373686f702e636f6d2F6576656e742F70632F617474656e642e67733F')
@@ -62,6 +61,7 @@ class DailyAttendance():
             print("%s started" % com)
             self.login_check = False
         except Exception as e:
+            print(e)
             print("%s couldn't login" % com)
             self.login_check = True
             while self.login_check:
@@ -73,7 +73,7 @@ class DailyAttendance():
         if 'gmarket' in com:
             attend = self.driver.find_element_by_css_selector('#wrapper > a').get_attribute('onclick')
             self.driver.execute_script(attend)
-            time.sleep(2)
+            time.sleep(10)
             if len(self.driver.window_handles) == 2:
                 self.driver.switch_to.window(self.driver.window_handles[1])
                 self.driver.close()
