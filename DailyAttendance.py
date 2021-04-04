@@ -44,10 +44,12 @@ class DailyAttendance():
                 self.driver.execute_script('onAttendanceClick();')
             elif 'sidmool' in com:
                 self.driver.get('https://www.sidmool.com/shop/member.html?type=login')
-                self.driver.find_element_by_name('id').send_keys(self.data[0])
-                self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
-                ### login check
-                self.driver.get_cookie('user_age')
+                if self.driver.get_cookie('user_age') is None:
+                    self.driver.find_element_by_name('id').send_keys(self.data[0])
+                    self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                else:
+                    self.driver.find_element_by_css_selector(
+                        '#aside > div.text-color.margin-m > div.login_area > div.login_title.margin-m > strong')
             elif 'gs' in com:
                 self.driver.get('https://www.gsshop.com/cust/login/login.gs?'
                                 'returnurl=68747470733A2F2F6576656e742e677373686f702e636f6d2F6576656e742F70632F617474656e642e67733F')
