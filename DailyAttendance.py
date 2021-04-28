@@ -30,12 +30,11 @@ class DailyAttendance():
         self.count = 1
         print("%s" % self.day)
 
-    def post_message(self,token, channel, text):
-        response = requests.post("https://slack.com/api/chat.postMessage",
+    def post_message(self, token, channel, text):
+        requests.post("https://slack.com/api/chat.postMessage",
                                  headers={"Authorization": "Bearer " + token},
                                  data={"channel": channel, "text": text}
                                  )
-        print(response.text)
 
     def login(self, com):
         try:
@@ -71,16 +70,18 @@ class DailyAttendance():
                     '#attendchk > div.event-common-wrap > div.section2 > '
                     'div.attendchk-button > a').get_attribute('onclick')
             print("%s started" % com)
-            #self.login_check = False
+            self.login_check = False
         except Exception as e:
             print(e)
             print("%s couldn't login" % com)
-            self.post_message(self.slack_token,self.ChannelName,"%s couldn't login" % com)
-			pass
-            #self.login_check = True
-            #while self.login_check:
-                #self.post_message(self.slack_token, self.ChannelName, "restarting" )
-                #self.login(com)
+            self.post_message(self.slack_token, self.ChannelName, "%s couldn't login" % com)
+            self.login_check = True
+            pass
+        # self.login_check = True
+        # while self.login_check:
+        # self.post_message(self.slack_token, self.ChannelName, "restarting" )
+        # self.login(com)
+
 
     def attend(self, com):
         if 'gmarket' in com:
@@ -207,9 +208,10 @@ class DailyAttendance():
         print("%s done" % com)
         time.sleep(2)
 
+
     def close(self):
         self.driver.quit()
-		
+
 
 def main():
     attend = DailyAttendance('hide')
