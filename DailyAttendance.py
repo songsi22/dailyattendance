@@ -71,17 +71,16 @@ class DailyAttendance():
                     '#attendchk > div.event-common-wrap > div.section2 > '
                     'div.attendchk-button > a').get_attribute('onclick')
             print("%s started" % com)
-            self.login_check = False
+            #self.login_check = False
         except Exception as e:
             print(e)
             print("%s couldn't login" % com)
             self.post_message(self.slack_token,self.ChannelName,"%s couldn't login" % com)
-            self.login_check = True
-            while self.login_check:
-                self.close()
-                time.sleep(5)
-                self.post_message(self.slack_token, self.ChannelName, "restarting" )
-                self.login(com)
+			pass
+            #self.login_check = True
+            #while self.login_check:
+                #self.post_message(self.slack_token, self.ChannelName, "restarting" )
+                #self.login(com)
 
     def attend(self, com):
         if 'gmarket' in com:
@@ -210,7 +209,7 @@ class DailyAttendance():
 
     def close(self):
         self.driver.quit()
-
+		
 
 def main():
     attend = DailyAttendance('hide')
