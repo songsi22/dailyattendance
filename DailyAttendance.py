@@ -1,3 +1,4 @@
+import requests
 import time
 import schedule
 from selenium import webdriver
@@ -7,6 +8,8 @@ import pickle
 
 class DailyAttendance():
     def __init__(self, type):
+        self.ChannelName = "#daily"
+        self.slack_token = 'xoxb-'
         if 'hide' in type:
             options = webdriver.ChromeOptions()
             options.add_argument('headless')
@@ -26,6 +29,13 @@ class DailyAttendance():
         self.login_check = True
         self.count = 1
         print("%s" % self.day)
+
+    def post_message(self,token, channel, text):
+        response = requests.post("https://slack.com/api/chat.postMessage",
+                                 headers={"Authorization": "Bearer " + token},
+                                 data={"channel": channel, "text": text}
+                                 )
+        print(response.text)
 
     def login(self, com):
         try:
@@ -65,10 +75,12 @@ class DailyAttendance():
         except Exception as e:
             print(e)
             print("%s couldn't login" % com)
+            self.post_message(self.slack_token,self.ChannelName,"%s couldn't login" % com)
             self.login_check = True
             while self.login_check:
-                print("%s trying" % com)
-                time.sleep(360)
+                self.close()
+                time.sleep(5)
+                self.post_message(self.slack_token, self.ChannelName, "restarting" )
                 self.login(com)
 
     def attend(self, com):
