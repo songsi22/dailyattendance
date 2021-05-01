@@ -174,12 +174,12 @@ class DailyAttendance():
                 except:
                     pass
                 # 마지막 날 포인트 얻기
-                try:
-                    self.driver.find_element_by_css_selector(
-                        '#attendchk > div.event-common-wrap > div.attend_take_point.disabled')
-                    pass
-                except:
-                    if self.today == self.last_day:
+                if self.today == self.last_day:
+                    try:
+                        self.driver.find_element_by_css_selector(
+                            '#attendchk > div.event-common-wrap > div.attend_take_point.disabled')
+                        pass
+                    except:
                         self.driver.find_element_by_css_selector(
                             '#attendchk > div.event-common-wrap > div.attend_take_point > a').click()
             print("%s done" % com_cate)
