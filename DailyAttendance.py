@@ -17,7 +17,7 @@ def post_message(token, channel, text):
 
 
 class DailyAttendance():
-    def __init__(self, type):
+    def __init__(self, type=''):
         self.failed = False
         self.year = datetime.datetime.today().year
         self.month = datetime.datetime.today().month
