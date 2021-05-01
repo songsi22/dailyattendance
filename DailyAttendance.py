@@ -37,7 +37,7 @@ class DailyAttendance():
             self.driver = webdriver.Chrome('./chromedriver', options=options)
         else:
             self.driver = webdriver.Chrome('./chromedriver')
-            self.driver.implicitly_wait(3)
+        self.driver.implicitly_wait(3)
         self.day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
         with open('data.plk', 'rb') as f:
             self.data = pickle.load(f)
