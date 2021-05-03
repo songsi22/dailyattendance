@@ -41,12 +41,12 @@ class DailyAttendance():
         self.day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
         with open('data.plk', 'rb') as f:
             self.data = pickle.load(f)
-        self.login_check = True
+        self.login_check = False
         print("%s" % self.day)
 
     def login(self, com_cate):
         try:
-            self.login_check = True
+            self.login_check = False
             url_dict = {
                 "gmarket": "https://signinssl.gmarket.co.kr/login/login?url=http://promotion.gmarket.co.kr/Event/PlusZone.asp",
                 "11": "https://login.11st.co.kr/auth/front/login.tmall?returnURL=https%3A%2F%2Fpromo.11st.co.kr%2Fview%2Fp%2F20210101-11check",
@@ -68,6 +68,11 @@ class DailyAttendance():
                 elif 'sidmool' in com_cate:
                     self.driver.find_element_by_name('id').send_keys(self.data[0])
                     self.driver.find_element_by_name('passwd').send_keys(self.data[2], Keys.ENTER)
+                    ### 로그인하자마자 alert 발생 unexpect 방지용
+                    try:
+                        self.driver.switch_to.alert.accept()
+                    except:
+                        pass
                 elif 'gs' in com_cate:
                     self.driver.find_element_by_id('id').click()
                     self.driver.find_element_by_id('id').send_keys(self.data[0])
@@ -75,17 +80,17 @@ class DailyAttendance():
                 ## cookie 로딩을 위한 시간
                 time.sleep(1)
                 if self.driver.get_cookie(cookie_dict[com_cate]) is not None:
-                    self.login_check = False
+                    self.login_check = True
             except Exception as e:
                 post_message(self.slack_token, self.channel_name, "%s login failed\n %s" % (com_cate, e))
-            if not self.login_check:
+            if self.login_check:
                 print("%s started" % com_cate)
                 time.sleep(2)
             else:
                 print("%s couldn't login" % com_cate)
                 post_message(self.slack_token, self.channel_name, "%s couldn't login" % com_cate)
         except Exception as e:
-            self.login_check = True
+            self.login_check = False
             print("%s exception" % com_cate)
             post_message(self.slack_token, self.channel_name, "%s exception\n %s" % (com_cate, e))
             pass
@@ -103,8 +108,7 @@ class DailyAttendance():
                     self.driver.switch_to.window(self.driver.window_handles[0])
                 else:
                     try:
-                        result = self.driver.switch_to.alert
-                        result.accept()
+                        self.driver.switch_to.alert.accept()
                     except:
                         pass
                 self.driver.switch_to.parent_frame()  # 메인 프레임으로 돌아가기
@@ -124,38 +128,34 @@ class DailyAttendance():
                             self.driver.switch_to.window(self.driver.window_handles[0])
                         else:
                             try:
-                                result = self.driver.switch_to.alert
-                                result.accept()
+                                self.driver.switch_to.alert.accept()
                             except:
                                 pass
             elif '11' in com_cate:
                 self.driver.execute_script('onAttendanceClick();')  # 메인 출첵
                 try:
-                    result = self.driver.switch_to.alert
-                    result.accept()
+                    self.driver.switch_to.alert.accept()
                 except:
                     pass
                 if self.today == self.last_day:
                     ## 5,15,마지막일 포인트 받기
-                    st11_cssselector_list = ['#fiveAttendanceBtn > a', '#fifteenAttendanceBtn > a', '#allAttendanceBtn > a']
+                    st11_cssselector_list = ['#fiveAttendanceBtn > a', '#fifteenAttendanceBtn > a',
+                                             '#allAttendanceBtn > a']
                     for cssselector in st11_cssselector_list:
                         st11_script = self.driver.find_element_by_css_selector(cssselector).get_attribute('onclick')
                         st11_script = str(st11_script).split(';')
                         self.driver.execute_script(st11_script[0])
                         time.sleep(1)
                         try:
-                            result = self.driver.switch_to.alert
-                            result.accept()
+                            self.driver.switch_to.alert.accept()
                         except:
                             pass
             elif 'sidmool' in com_cate:
                 ## alert 두번 뜨는 경우 있음
                 try:
-                    result = self.driver.switch_to.alert
-                    result.accept()
+                    self.driver.switch_to.alert.accept()
                     try:
-                        result = self.driver.switch_to.alert
-                        result.accept()
+                        self.driver.switch_to.alert.accept()
                     except:
                         pass
                 except:
@@ -169,8 +169,7 @@ class DailyAttendance():
                 time.sleep(3)
                 self.driver.find_element_by_css_selector('#attendchk-popLayer > dl > dd > a').click()
                 try:
-                    result = self.driver.switch_to.alert
-                    result.accept()
+                    self.driver.switch_to.alert.accept()
                 except:
                     pass
                 # 마지막 날 포인트 얻기
@@ -197,7 +196,7 @@ def main():
     urllist = ['gmarket', '11', 'gs', 'sidmool']
     for url in urllist:
         attend.login(url)
-        if not attend.login_check:
+        if attend.login_check:
             attend.attend(url)
             pass
         else:
