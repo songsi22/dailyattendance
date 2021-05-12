@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import pickle
 import datetime
 import calendar
-
+from urllib import parse
 
 def post_message(token, channel, text):
     requests.post("https://slack.com/api/chat.postMessage",
@@ -53,7 +53,7 @@ class DailyAttendance():
                 "gs": "https://www.gsshop.com/cust/login/login.gs?returnurl=68747470733A2F2F6576656e742e677373686f702e636f6d2F6576656e742F70632F617474656e642e67733F",
                 "sidmool": "https://www.sidmool.com/shop/member.html?type=login",
             }
-            cookie_dict = {"gmarket": "shipnation",
+            cookie_dict = {"gmarket": parse.quote("user%5Finfo"),
                            "11": "TMALL_AUTH",
                            "gs": "username",
                            "sidmool": "user_age", }
