@@ -9,6 +9,7 @@ import datetime
 import calendar
 from urllib import parse
 
+
 def post_message(token, channel, text):
     requests.post("https://slack.com/api/chat.postMessage",
                   headers={"Authorization": "Bearer " + token},
@@ -88,7 +89,7 @@ class DailyAttendance():
                 time.sleep(2)
             else:
                 print("%s couldn't login" % com_cate)
-                post_message(self.slack_token, self.channel_name, "%s couldn't login" % com_cate)
+                post_message(self.slack_token, self.channel_name, "%s couldn't login" % (com_cate))
         except Exception as e:
             self.login_check = False
             print("%s exception" % com_cate)
@@ -98,6 +99,11 @@ class DailyAttendance():
     def attend(self, com_cate):
         try:
             if 'gmarket' in com_cate:
+                try:  ### 비밀번호 변경 3개월
+                    self.driver.find_element_by_css_selector(
+                        '#PasswordChangeInform > div > div > div.btn_area > a.btn_again').click()
+                except:
+                    pass
                 self.driver.switch_to.frame('AttendRulletFrame')  # 룰렛 프레임으로 진입
                 attend = self.driver.find_element_by_css_selector('#wrapper > a').get_attribute('onclick')
                 self.driver.execute_script(attend)
@@ -132,6 +138,10 @@ class DailyAttendance():
                             except:
                                 pass
             elif '11' in com_cate:
+                try:  ### 비밀번호 변경 3개월
+                    self.driver.find_element_by_css_selector('#nextTime').click()
+                except:
+                    pass
                 self.driver.execute_script('onAttendanceClick();')  # 메인 출첵
                 try:
                     self.driver.switch_to.alert.accept()
@@ -179,8 +189,12 @@ class DailyAttendance():
                             '#attendchk > div.event-common-wrap > div.attend_take_point.disabled')
                         pass
                     except:
-                        self.driver.find_element_by_css_selector(
-                            '#attendchk > div.event-common-wrap > div.attend_take_point > a').click()
+                        ### 모든 출석 이후 축하 alert 발생
+                        try:
+                            self.driver.switch_to.alert.accept()
+                        except:
+                            self.driver.find_element_by_css_selector(
+                                '#attendchk > div.event-common-wrap > div.attend_take_point > a').click()
             print("%s done" % com_cate)
         except Exception as e:
             print("%s couldn't attendance" % com_cate)
@@ -193,7 +207,7 @@ class DailyAttendance():
 
 def main():
     attend = DailyAttendance('hide')
-    urllist = ['gmarket', '11', 'gs', 'sidmool']
+    urllist = ['gmarket','11','gs','sidmool']
     for url in urllist:
         attend.login(url)
         if attend.login_check:
